@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Prospectus">
+<meta name="theme-color" content="#1f2937">
+<title>Parivaar Catering – Function Prospectus Form</title>
+<style>
+*{box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;margin:0;background:#f3f4f6;color:#111;font-size:14px}
+header{background:#1f2937;color:#fff;padding:12px 18px;display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+header h1{font-size:18px;margin:0;flex:1}
+nav{display:flex;gap:6px}
+nav button{background:#374151;color:#fff;border:0;padding:11px 16px;border-radius:8px;cursor:pointer;font-size:15px;touch-action:manipulation}
+nav button.on{background:#f59e0b;color:#111;font-weight:bold}
+main{max-width:1050px;margin:16px auto;padding:0 12px}
+.card{background:#fff;border:1px solid #d1d5db;border-radius:8px;padding:14px;margin-bottom:14px}
+.card h2{font-size:14px;margin:0 0 10px;text-transform:uppercase;letter-spacing:.4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.grid .wide{grid-column:1/-1}
+label{display:block;font-size:12px;font-weight:bold;margin-bottom:3px;color:#374151}
+input,select,textarea{width:100%;padding:10px;font-size:16px;border:1px solid #9ca3af;border-radius:5px;font:inherit;background:#fff}
+input[readonly]{background:#f3f4f6}
+input[type=checkbox]{width:22px;height:22px}
+textarea{min-height:52px;resize:vertical}
+.fpid{background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;padding:8px 12px;font-weight:bold;font-size:16px;display:inline-block}
+.btn{background:#2563eb;color:#fff;border:0;padding:11px 16px;border-radius:8px;cursor:pointer;font-size:15px;touch-action:manipulation}
+.btn.g{background:#059669}.btn.r{background:#dc2626}.btn.x{background:#6b7280}.btn.s{padding:9px 13px;font-size:14px}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.bar .sp{flex:1}
+table{border-collapse:collapse;width:100%;background:#fff}
+th,td{border:1px solid #9ca3af;padding:6px 8px;text-align:left}
+th{background:#e5e7eb}
+td.n,th.n{text-align:right}
+tfoot td{font-weight:bold;background:#f9fafb}
+.mrow{display:grid;grid-template-columns:200px 1fr auto;gap:6px;margin-bottom:6px}
+.note{font-size:12px;color:#6b7280}
+.prow{display:grid;grid-template-columns:140px 150px 1fr 130px auto;gap:6px;margin-bottom:6px}
+.sum{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+.sum div{background:#f3f4f6;border:1px solid #d1d5db;border-radius:6px;padding:8px 12px;font-size:13px}
+.sum b{font-size:16px;display:block}
+.st{font-weight:bold;padding:2px 8px;border-radius:10px;color:#fff;font-size:12px}
+.st.PAID{background:#059669}.st.PARTIAL{background:#d97706}.st.UNPAID{background:#dc2626}
+@media(max-width:640px){.prow{grid-template-columns:1fr 1fr}}
+.hide{display:none}
+.scroll{overflow-x:auto}
+</style>
+</head>
+<body>
+<header>
+  <h1>PC PARIVAAR CATERING – Function Prospectus <small style="font-weight:normal;font-size:11px;opacity:.7">v5</small></h1>
+  <nav>
+    <button id="t_form" class="on" onclick="show('form')">Prospectus Form</button>
+    <button id="t_rec" onclick="show('rec')">Records</button>
+    <button id="t_mtd" onclick="show('mtd')">Month to Date</button>
+  </nav>
+  <nav>
+    <button style="background:#059669" onclick="backup()">⬇ Backup</button>
+    <button style="background:#2563eb" onclick="document.getElementById('rf').click()">⬆ Restore</button>
+  </nav>
+</header>
+<main>
+
+<!-- FORM -->
+
+<section id="v_form">
+  <div class="bar">
+    <span>FP ID: <span class="fpid" id="fpid">-</span></span>
+    <span class="sp"></span>
+    <button class="btn g" onclick="saveRec()">Save</button>
+    <button class="btn" onclick="newRec()">New</button>
+    <button class="btn x" onclick="exportWordCurrent()">Word (.docx)</button>
+  </div>
+  <div class="card"><h2>Customer Details</h2><div class="grid" id="g_cust"></div></div>
+  <div class="card"><h2>Function Details</h2><div class="grid" id="g_func"></div></div>
+  <div class="card"><h2>Session Timings &amp; Package</h2>
+    <p class="note" style="margin:0 0 8px">Changes automatically when you choose the Meal Period. Every value stays editable.</p>
+    <div id="slotRows"></div><button class="btn s" onclick="addRow('slotRows')">+ Add timing</button>
+    <datalist id="slotlist"></datalist>
+    <div class="grid" id="g_pkg" style="margin-top:12px"></div></div>
+  <div class="card"><h2>Payments &amp; Advance</h2>
+    <p class="note" style="margin:0 0 8px">Every advance received is added here and linked to the Amount, Balance and Payment Status.</p>
+    <div id="payRows"></div><button class="btn s" onclick="addPay()">+ Add payment</button>
+    <div class="sum"><div>Total Amount<b id="sumAmt">0</b></div><div>Advance Paid<b id="sumPaid">0</b></div><div>Balance Due<b id="sumBal">0</b></div><div>Status<b><span class="st UNPAID" id="sumSt">UNPAID</span></b></div></div></div>
+  <div class="card"><h2>Veg Menu</h2><div id="menuRows"></div>
+    <button class="btn s" onclick="addRow('menuRows')">+ Add row</button></div>
+  <div class="card"><h2>Special Instructions / Amendments</h2><div id="spRows"></div>
+    <button class="btn s" onclick="addRow('spRows')">+ Add row</button></div>
+</section>
+
+<!-- RECORDS -->
+
+<section id="v_rec" class="hide">
+  <div class="card">
+    <div class="bar">
+      <input id="q" placeholder="Search FP ID, name, company, mobile, email…" oninput="renderRec()" style="max-width:320px">
+      <span class="sp"></span>
+      <button class="btn g" onclick="exportRecXlsx()">Export all – Excel</button>
+      <button class="btn x" onclick="backup()">Backup</button>
+      <button class="btn x" onclick="document.getElementById('rf').click()">Restore</button>
+    </div>
+    <div class="scroll"><table><thead><tr><th>FP ID</th><th>Date</th><th>Name</th><th>Company</th><th>Event Type</th><th class="n">Pax</th><th class="n">Amount</th><th class="n">Paid</th><th class="n">Balance</th><th></th></tr></thead>
+    <tbody id="recBody"></tbody></table></div>
+    <p id="bk" class="note" style="color:#dc2626;font-weight:bold"></p>
+    <p class="note">Records are stored locally on this device and browser only (not on a server) and will not appear on other devices. Use Backup / Restore to move them.</p>
+  </div>
+</section>
+
+<!-- MTD -->
+
+<section id="v_mtd" class="hide">
+  <div class="card">
+    <div class="bar">
+      <label style="margin:0">Month</label><input type="month" id="mm" style="max-width:180px" onchange="renderMtd()">
+      <label style="margin:0"><input type="checkbox" id="full" onchange="renderMtd()"> Include full month (upcoming dates)</label>
+      <span class="sp"></span>
+      <button class="btn g" onclick="exportMtdXlsx()">Excel</button>
+      <button class="btn x" onclick="exportMtdDocx()">Word (.docx)</button>
+    </div>
+    <h3 id="mtdTitle" style="margin:6px 0 10px"></h3>
+    <div class="scroll"><table><thead><tr><th>Name</th><th>Company</th><th class="n">Pax</th><th class="n">Amount (₹)</th><th>Event Type</th></tr></thead>
+    <tbody id="mtdBody"></tbody><tfoot id="mtdFoot"></tfoot></table></div>
+  </div>
+</section>
+</main>
+<input type="file" id="rf" accept=".json,application/json" class="hide" onchange="restore(this)">
+
+<script async src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<script async src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.js"></script>
+
+<script>
+window.onerror=function(m,u,l){var d=document.createElement('div');d.style.cssText='background:#dc2626;color:#fff;padding:10px;font:14px Arial';d.textContent='Page error: '+m+' (line '+l+'). Please send this message.';document.body.insertBefore(d,document.body.firstChild)};
+const LS='fp_records_v1';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const num=v=>parseFloat(v)||0;
+const inr=n=>Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2});
+const fmt=d=>d?d.split('-').reverse().join('/'):'';
+const dayOf=d=>d?new Date(d+'T00:00:00').toLocaleDateString('en-US',{weekday:'long'}).toUpperCase():'';
+const load=()=>{try{return JSON.parse(localStorage.getItem(LS))||[]}catch(e){return[]}};
+const store=r=>{try{localStorage.setItem(LS,JSON.stringify(r))}catch(e){alert('Could not save on this device (browser storage is full or blocked, e.g. private mode).')}};
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();
+
+/* Session presets: edit these defaults to suit your hotel */
+const SESS={
+ 'LUNCH':{timings:'9 AM TO 6 PM',slots:[['AMT','10:30 AM'],['LUNCH','1:00 PM'],['PMT','4:00 PM']],cs:'AMT',ce:'PMT'},
+ 'BREAKFAST':{timings:'7 AM TO 11 AM',slots:[['BREAKFAST','8:00 AM']],cs:'BREAKFAST',ce:'BREAKFAST'},
+ 'HI-TEA':{timings:'3 PM TO 7 PM',slots:[['HI-TEA','4:30 PM']],cs:'HI-TEA',ce:'HI-TEA'},
+ 'DINNER':{timings:'6 PM TO 11 PM',slots:[['DINNER','8:00 PM']],cs:'DINNER',ce:'DINNER'},
+ 'LUNCH & HI-TEA':{timings:'11 AM TO 7 PM',slots:[['LUNCH','1:00 PM'],['HI-TEA','4:30 PM']],cs:'LUNCH',ce:'HI-TEA'},
+ 'FULL DAY':{timings:'9 AM TO 10 PM',slots:[['AMT','10:30 AM'],['LUNCH','1:00 PM'],['PMT','4:00 PM'],['DINNER','8:00 PM']],cs:'AMT',ce:'DINNER'}
+};
+const MODES=['Cash','UPI','Card','Bank Transfer','Cheque'];
+const F={
+ g_cust:[['name','Customer Name'],['company','Company'],['phone','Phone Number','tel'],['mobile','Mobile Number','tel'],['email','Email','email'],['address','Address','textarea'],['ref','Reference']],
+ g_func:[['date','Function Date','date'],['day','Day','ro'],['venue','Venue'],['timings','Timings'],
+  ['meal','Meal Period','select',Object.keys(SESS)],
+  ['type','Event Type','text','types'],['seating','Seating Style'],['stage','Stage Size'],
+  ['conf','Confirmed Pax','number'],['exp','Expected Pax','number'],['rate','Rate per Pax (₹)','number'],
+  ['pp','Rate is ++ (taxes extra)','check'],['amount','Amount (₹)','number'],['pay','Mode of Payment']],
+ g_pkg:[['cs','Package Cycle Starts With','text','slotlist'],['ce','Package Cycle Ends With','text','slotlist'],['head','Head Table'],['av','Audio Visuals']]
+};
+const MENU=[['TEA/COFFEE','2 TIMES TEA/COFFEE WITH BISCUITS'],['SOUP',''],['SALAD',''],['VEG CURRY',''],['FLAVOURED RICE',''],['DAL',''],
+ ['INDIAN BREADS',''],['DESSERT',''],['ICE-CREAM',''],['COMMON ITEMS',''],['FNB',''],['FNB PRODUCTION','']];
+const SPEC=[['TEA/COFFEE',''],['FLAVOURED RICE',''],['DESSERT',''],['LUNCH','']];
+let curId=null, amountManual=false;
+
+function build(){
+  for(const g in F){
+    $(g).innerHTML=F[g].map(([k,l,t,o])=>{
+      const id='f_'+k; let el;
+      if(t==='textarea') el=`<textarea id="${id}"></textarea>`;
+
+```
+  else if(t==='select') el=`<select id="${id}">${o.map(x=>`<option>${x}</option>`).join('')}</select>`;
+  else if(t==='check') el=`<input type="checkbox" id="${id}" checked>`;
+  else if(t==='ro') el=`<input id="${id}" readonly>`;
+  else if(t==='text'&&o==='slotlist') el=`<input id="${id}" list="slotlist">`;
+  else if(t==='text'&&o) el=`<input id="${id}" list="types"><datalist id="types"><option>CONFERENCE<option>MEETING<option>CORPORATE LUNCH<option>WEDDING<option>BIRTHDAY<option>SEMINAR<option>TRAINING<option>PARTY</datalist>`;
+  else el=`<input id="${id}" type="${t||'text'}">`;
+  const wide=(t==='textarea')?' wide':'';
+  return `<div class="${wide}"><label for="${id}">${l}</label>${el}${k==='amount'?'<div class="note">Auto = Rate × Confirmed Pax. <a href="#" onclick="autoAmt();return false">Reset to auto</a></div>':''}</div>`;
+}).join('');
+```
+
+}
+$(‘f_date’).addEventListener(‘change’,()=>$(‘f_day’).value=dayOf($(‘f_date’).value));
+[‘f_rate’,‘f_conf’].forEach(i=>$(i).addEventListener(‘input’,()=>{if(!amountManual)calcAmt()}));
+$(‘f_amount’).addEventListener(‘input’,()=>amountManual=true);
+$(‘f_meal’).addEventListener(‘change’,applySession);
+document.addEventListener(‘input’,e=>{if(e.target.id===‘f_amount’||e.target.closest(’#payRows’))updSum()});
+}
+function calcAmt(){const a=num($(‘f_rate’).value)*num($(‘f_conf’).value);$(‘f_amount’).value=a?a:’’;updSum()}
+function autoAmt(){amountManual=false;calcAmt()}
+function rows(box,data){
+$(box).innerHTML=’’;data.forEach(r=>addRow(box,r));
+}
+const PH={menuRows:[‘Category’,‘Items / details’],spRows:[‘Category’,‘Items / details’],slotRows:[‘Timing name (e.g. LUNCH)’,‘Time (e.g. 1:00 PM)’]};
+function addRow(box,r){
+const d=document.createElement(‘div’);d.className=‘mrow’;
+d.innerHTML=`<input placeholder="${PH[box][0]}" value="${esc(r?r[0]:'')}"><input placeholder="${PH[box][1]}" value="${esc(r?r[1]:'')}"><button class="btn r s" onclick="rmRow(this)">✕</button>`;
+d.addEventListener(‘input’,()=>{if(box===‘slotRows’)refreshSlots()});
+$(box).appendChild(d);if(box===‘slotRows’)refreshSlots();
+}
+function rmRow(b){const p=b.parentNode,box=p.parentNode.id;p.remove();if(box===‘slotRows’)refreshSlots()}
+function refreshSlots(){$(‘slotlist’).innerHTML=getRows(‘slotRows’).map(r=>`<option value="${esc(r[0])}">`).join(’’)}
+function applySession(){
+const p=SESS[$(‘f_meal’).value];if(!p)return;
+$(‘f_timings’).value=p.timings;$(‘f_cs’).value=p.cs;$(‘f_ce’).value=p.ce;
+rows(‘slotRows’,p.slots);
+}
+/* payments */
+function addPay(p){
+p=p||{date:new Date().toISOString().slice(0,10),mode:MODES[0],ref:’’,amt:’’};
+const d=document.createElement(‘div’);d.className=‘prow’;
+d.innerHTML=`<input type="date" value="${esc(p.date)}"><select>${MODES.map(m=>`<option${m===p.mode?’ selected’:’’}>${m}</option>`).join('')}</select><input placeholder="Reference / receipt no." value="${esc(p.ref)}"><input type="number" placeholder="Amount ₹" value="${esc(p.amt)}"><button class="btn r s" onclick="this.parentNode.remove();updSum()">✕</button>`;
+$(‘payRows’).appendChild(d);
+}
+const getPays=()=>[…$(‘payRows’).children].map(d=>{const i=d.querySelectorAll(‘input,select’);return{date:i[0].value,mode:i[1].value,ref:i[2].value,amt:i[3].value}}).filter(p=>num(p.amt)||p.ref);
+const paidOf=r=>(r.pays||[]).reduce((s,p)=>s+num(p.amt),0);
+const balOf=r=>num(r.amount)-paidOf(r);
+const statusOf=r=>{const p=paidOf(r),a=num(r.amount);return p>0&&p>=a?‘PAID’:p>0?‘PARTIAL’:‘UNPAID’};
+function updSum(){
+const r={amount:$(‘f_amount’).value,pays:getPays()};
+$(‘sumAmt’).textContent=‘₹’+inr(num(r.amount));$(‘sumPaid’).textContent=‘₹’+inr(paidOf(r));
+const b=balOf(r);$(‘sumBal’).textContent=‘₹’+inr(b);$(‘sumBal’).style.color=b<0?’#dc2626’:’’;
+const st=statusOf(r);$(‘sumSt’).textContent=st;$(‘sumSt’).className=’st ’+st;
+}
+const getRows=box=>[…$(box).children].map(d=>{const i=d.querySelectorAll(‘input’);return[i[0].value,i[1].value]}).filter(r=>r[0]||r[1]);
+
+function nextId(){
+const t=new Date(), p=‘FP-’+t.getFullYear()+String(t.getMonth()+1).padStart(2,‘0’)+’-’;
+let m=0;load().forEach(r=>{if(r.id.startsWith(p))m=Math.max(m,parseInt(r.id.slice(p.length))||0)});
+return p+String(m+1).padStart(3,‘0’);
+}
+function newRec(){
+curId=nextId();$(‘fpid’).textContent=curId;amountManual=false;
+for(const g in F)F[g].forEach(([k,l,t,o])=>{const e=$(‘f_’+k);if(t===‘check’)e.checked=true;else if(t===‘select’)e.selectedIndex=0;else e.value=’’});
+rows(‘menuRows’,MENU);rows(‘spRows’,SPEC);
+$(‘f_meal’).value=‘LUNCH’;applySession();$(‘payRows’).innerHTML=’’;updSum();
+}
+function collect(){
+const r={id:curId,menu:getRows(‘menuRows’),special:getRows(‘spRows’),slots:getRows(‘slotRows’),pays:getPays()};
+for(const g in F)F[g].forEach(([k,l,t])=>{const e=$(‘f_’+k);r[k]=t===‘check’?e.checked:e.value});
+r.day=dayOf(r.date);return r;
+}
+function fill(r){
+curId=r.id;$(‘fpid’).textContent=r.id;amountManual=true;
+for(const g in F)F[g].forEach(([k,l,t])=>{const e=$(‘f_’+k);if(t===‘check’)e.checked=!!r[k];else e.value=r[k]==null?’’:r[k]});
+rows(‘menuRows’,r.menu||[]);rows(‘spRows’,r.special||[]);
+rows(‘slotRows’,r.slots||[[‘AMT’,r.amt],[‘LUNCH’,r.lunch],[‘PMT’,r.pmt]].filter(x=>x[1]));
+$(‘payRows’).innerHTML=’’;(r.pays||[]).forEach(addPay);updSum();
+}
+function saveRec(){
+const r=collect();
+if(!r.name&&!r.company){alert(‘Enter customer name or company.’);return}
+if(!r.date){alert(‘Select the function date.’);return}
+const a=load(),i=a.findIndex(x=>x.id===r.id);
+if(i>=0)a[i]=r;else a.push(r);
+store(a);alert(‘Saved ‘+r.id+’ on this device.’);
+curId=r.id;renderRec();
+}
+function delRec(id){if(confirm(‘Delete ‘+id+’?’)){store(load().filter(x=>x.id!==id));renderRec();if(curId===id)newRec()}}
+function editRec(id){const r=load().find(x=>x.id===id);if(r){fill(r);show(‘form’)}}
+
+function bkNote(){
+const t=parseInt(localStorage.getItem(‘fp_last_backup’))||0,n=load().length;
+$(‘bk’).textContent=(n&&(!t||Date.now()-t>6*864e5))?‘Back up now: browsers on iPad can delete saved site data if the site is unused for a while. Tap Backup and save the file to Files/iCloud.’:’’;
+}
+function renderRec(){bkNote();
+const q=($(‘q’).value||’’).toLowerCase();
+const a=load().sort((x,y)=>(y.date||’’).localeCompare(x.date||’’))
+.filter(r=>[r.id,r.name,r.company,r.type,r.mobile,r.phone,r.email].join(’ ’).toLowerCase().includes(q));
+$(‘recBody’).innerHTML=a.map(r=>`<tr><td>${esc(r.id)}</td><td>${fmt(r.date)}</td><td>${esc(r.name)}</td><td>${esc(r.company)}</td><td>${esc(r.type)}</td><td class="n">${esc(r.conf)}</td><td class="n">${inr(r.amount)}</td><td class="n">${inr(paidOf(r))}</td><td class="n" style="${balOf(r)<0?'color:#dc2626':''}">${inr(balOf(r))}</td>
+
+   <td style="white-space:nowrap"><button class="btn s" onclick="editRec('${r.id}')">Edit</button> <button class="btn x s" onclick="exportWord('${r.id}')">Word</button> <button class="btn r s" onclick="delRec('${r.id}')">Del</button></td></tr>`).join('')
+   ||'<tr><td colspan="10">No records yet.</td></tr>';
+}
+
+/* ––––– Month to date ––––– */
+function mtdData(){
+const m=$(‘mm’).value;if(!m)return[];
+const now=new Date(),today=now.getFullYear()+’-’+String(now.getMonth()+1).padStart(2,‘0’)+’-’+String(now.getDate()).padStart(2,‘0’);
+const cur=m===today.slice(0,7),full=$(‘full’).checked;
+return load().filter(r=>r.date&&r.date.startsWith(m)&&(full||!cur||r.date<=today)).sort((a,b)=>a.date.localeCompare(b.date))
+.map(r=>({name:r.name,company:r.company,pax:num(r.conf),amount:num(r.amount),type:r.type}));
+}
+function renderMtd(){
+if(!$(‘mm’).value)return;
+const d=mtdData(),tp=d.reduce((s,r)=>s+r.pax,0),ta=d.reduce((s,r)=>s+r.amount,0);
+const now=new Date(),cur=$(‘mm’).value===now.getFullYear()+’-’+String(now.getMonth()+1).padStart(2,‘0’);
+const [y,m]=$(‘mm’).value.split(’-’);
+$(‘mtdTitle’).textContent=‘Month to Date – ‘+new Date(y,m-1,1).toLocaleDateString(‘en-US’,{month:‘long’,year:‘numeric’})+((cur&&!$(‘full’).checked)?’ (up to ‘+now.toLocaleDateString(‘en-GB’)+’)’:’’);
+$(‘mtdBody’).innerHTML=d.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.company)}</td><td class="n">${r.pax}</td><td class="n">${inr(r.amount)}</td><td>${esc(r.type)}</td></tr>`).join(’’)||’<tr><td colspan="5">No events in this period.</td></tr>’;
+$(‘mtdFoot’).innerHTML=`<tr><td colspan="2">TOTAL</td><td class="n">${tp}</td><td class="n">${inr(ta)}</td><td></td></tr>`;
+}
+
+/* ––––– Downloads ––––– */
+function dl(blob,name){const a=document.createElement(‘a’);a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500)}
+function needX(){if(typeof XLSX===‘undefined’){alert(‘Excel library did not load. Check your internet connection and reload.’);return false}return true}
+function needD(){return typeof docx!==‘undefined’}
+function xlsx(sheets,name){
+if(!needX())return;const wb=XLSX.utils.book_new();
+sheets.forEach(([n,aoa,w])=>{const ws=XLSX.utils.aoa_to_sheet(aoa);ws[’!cols’]=w.map(x=>({wch:x}));XLSX.utils.book_append_sheet(wb,ws,n)});
+XLSX.writeFile(wb,name);
+}
+function exportRecXlsx(){
+const a=load().sort((x,y)=>(x.date||’’).localeCompare(y.date||’’));
+const h=[‘FP ID’,‘Date’,‘Day’,‘Customer Name’,‘Company’,‘Phone’,‘Mobile’,‘Email’,‘Address’,‘Reference’,‘Venue’,‘Timings’,‘Meal Period’,‘Event Type’,‘Seating’,‘Stage Size’,‘Confirmed Pax’,‘Expected Pax’,‘Rate’,‘Amount’,‘Advance Paid’,‘Balance’,‘Payment Status’,‘Mode of Payment’,‘Session Timings’,‘Cycle Starts’,‘Cycle Ends’,‘Head Table’,‘Audio Visuals’,‘Menu’,‘Special Instructions’];
+const rows=a.map(r=>[r.id,fmt(r.date),r.day,r.name,r.company,r.phone,r.mobile,r.email,r.address,r.ref,r.venue,r.timings,r.meal,r.type,r.seating,r.stage,num(r.conf),num(r.exp),num(r.rate),num(r.amount),paidOf(r),balOf(r),statusOf(r),r.pay,
+(r.slots||[]).map(x=>x[0]+’ ‘+x[1]).join(’ | ‘),r.cs,r.ce,r.head,r.av,
+(r.menu||[]).map(x=>x[0]+’: ‘+x[1]).join(’ | ‘),(r.special||[]).map(x=>x[0]+’: ‘+x[1]).join(’ | ‘)]);
+const ph=[‘FP ID’,‘Customer Name’,‘Company’,‘Payment Date’,‘Mode’,‘Reference’,‘Amount’];
+const pr=[];a.forEach(r=>(r.pays||[]).forEach(p=>pr.push([r.id,r.name,r.company,fmt(p.date),p.mode,p.ref,num(p.amt)])));
+xlsx([[‘Prospectus Records’,[h,…rows],h.map(x=>Math.max(12,x.length+2))],[‘Payments’,[ph,…pr],[16,24,24,14,16,24,14]]],‘Function_Prospectus_Records.xlsx’);
+}
+function exportMtdXlsx(){
+const d=mtdData(),h=[‘Name’,‘Company’,‘Pax’,‘Amount’,‘Event Type’];
+const rows=d.map(r=>[r.name,r.company,r.pax,r.amount,r.type]);
+rows.push([‘TOTAL’,’’,d.reduce((s,r)=>s+r.pax,0),d.reduce((s,r)=>s+r.amount,0),’’]);
+xlsx([[‘Month to Date’,[h,…rows],[24,24,8,14,20]]],‘Month_to_Date_’+$(‘mm’).value+’.xlsx’);
+}
+
+/* Word via docx library, with .doc (HTML) fallback */
+function wordFallback(html,name){dl(new Blob([’\ufeff<html><head><meta charset="utf-8"></head><body style="font-family:Arial">’+html+’</body></html>’],{type:‘application/msword’}),name.replace(’.docx’,’.doc’))}
+const bd={style:‘single’,size:4,color:‘808080’};
+function exportMtdDocx(){
+const d=mtdData(),tp=d.reduce((s,r)=>s+r.pax,0),ta=d.reduce((s,r)=>s+r.amount,0);
+const title=$(‘mtdTitle’).textContent,name=‘Month_to_Date_’+$(‘mm’).value+’.docx’;
+const H=[‘Name’,‘Company’,‘Pax’,‘Amount (₹)’,‘Event Type’],R=d.map(r=>[r.name,r.company,String(r.pax),inr(r.amount),r.type]);R.push([‘TOTAL’,’’,String(tp),inr(ta),’’]);
+if(!needD()){
+wordFallback(’<h2>’+esc(title)+’</h2><table border="1" cellpadding="5" style="border-collapse:collapse"><tr>’+H.map(x=>’<th>’+x+’</th>’).join(’’)+’</tr>’+R.map(r=>’<tr>’+r.map(x=>’<td>’+esc(x)+’</td>’).join(’’)+’</tr>’).join(’’)+’</table>’,name);return;
+}
+const D=docx,w=[2600,2600,1000,1700,2000],B={top:bd,bottom:bd,left:bd,right:bd};
+const c=(t,i,b,sh)=>new D.TableCell({width:{size:w[i],type:D.WidthType.DXA},borders:B,shading:sh?{type:D.ShadingType.CLEAR,fill:‘E5E7EB’,color:‘auto’}:undefined,margins:{top:60,bottom:60,left:90,right:90},
+children:[new D.Paragraph({alignment:(i===2||i===3)?D.AlignmentType.RIGHT:D.AlignmentType.LEFT,children:[new D.TextRun({text:t,bold:b,font:‘Arial’,size:20})]})]});
+const tbl=new D.Table({width:{size:9900,type:D.WidthType.DXA},columnWidths:w,rows:[new D.TableRow({tableHeader:true,children:H.map((x,i)=>c(x,i,true,true))}),…R.map((r,k)=>new D.TableRow({children:r.map((x,i)=>c(x,i,k===R.length-1,k===R.length-1))}))]});
+const doc=new D.Document({sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:900,bottom:900,left:900,right:900}}},children:[
+new D.Paragraph({alignment:D.AlignmentType.CENTER,children:[new D.TextRun({text:‘PC  PARIVAAR CATERING’,bold:true,font:‘Arial’,size:32})]}),
+new D.Paragraph({alignment:D.AlignmentType.CENTER,spacing:{after:200},children:[new D.TextRun({text:title,bold:true,font:‘Arial’,size:24})]}),tbl]}]});
+D.Packer.toBlob(doc).then(b=>dl(b,name));
+}
+function exportWord(id){const r=load().find(x=>x.id===id);if(r)wordProspectus(r)}
+function exportWordCurrent(){wordProspectus(collect())}
+function wordProspectus(r){
+const name=‘Function_Prospectus_’+(r.id||‘draft’)+’.docx’;
+const rate=r.rate?‘₹’+r.rate+(r.pp?’++’:’’):’’;
+const info=[[‘Confirmed Pax’,r.conf,‘Expected Pax’,r.exp],[‘Rate’,rate,‘Date’,fmt(r.date)],[‘Guest Name & Address’,[r.name||r.company,r.company&&r.name?r.company:’’,r.address].filter(Boolean).join(’, ‘),‘Day’,r.day],
+[‘Phone / Mobile’,[r.phone,r.mobile].filter(Boolean).join(’ / ‘),‘Email’,r.email],[‘Venue’,r.venue,‘Timings’,r.timings],[‘Reference’,r.ref,‘Meal Period’,r.meal]];
+const pd=paidOf(r),bal=balOf(r);
+const left=[…(r.slots||[]).map(x=>[x[0],x[1]]),[‘Advance Paid’,‘₹’+inr(pd)],[‘Balance Due’,‘₹’+inr(bal)]];
+const right=[[‘Type of Function’,r.type],[‘Mode of Payment’,r.pay],[‘Seating Style’,r.seating],[‘Stage Size’,r.stage]];
+const sched=Array.from({length:Math.max(left.length,right.length)},(_,i)=>[…(left[i]||[’’,’’]),…(right[i]||[’’,’’])]);
+const pays=(r.pays||[]).map(p=>[fmt(p.date),p.mode,p.ref,‘₹’+inr(num(p.amt))]);
+const pkg=[[‘Package Cycle Starts With’,r.cs,‘Head Table’,r.head],[‘Package Cycle Ends With’,r.ce,‘Audio Visuals’,r.av]];
+if(!needD()){
+const t=(rs)=>’<table border="1" cellpadding="4" style="border-collapse:collapse;width:100%">’+rs.map(x=>’<tr>’+x.map((c,i)=>’<td’+(i%2?’’:’ style=“background:#eee;font-weight:bold”’)+’>’+esc(c)+’</td>’).join(’’)+’</tr>’).join(’’)+’</table><br>’;
+wordFallback(’<h2 align="center">PC PARIVAAR CATERING<br>FUNCTION PROSPECTUS</h2><p>FP ID: ‘+esc(r.id)+’</p>’+t(info)+t(sched)+t(pkg)+’<h3 align="center">VEG MENU</h3>’+t(r.menu)+’<h3>SPECIAL INSTRUCTIONS</h3>’+t(r.special)+’<h3>PAYMENT DETAILS</h3>’+t([[‘Date’,‘Mode’,‘Reference’,‘Amount’],…pays,[’’,’’,‘Total Amount’,‘₹’+inr(num(r.amount))],[’’,’’,‘Advance Paid’,‘₹’+inr(pd)],[’’,’’,‘Balance Due’,‘₹’+inr(bal)]]),name);return;
+}
+const D=docx,B={top:bd,bottom:bd,left:bd,right:bd},mar={top:50,bottom:50,left:90,right:90},L=‘EDEDED’,W=10206;
+const cell=(t,w,o={})=>new D.TableCell({width:{size:w,type:D.WidthType.DXA},borders:B,margins:mar,verticalAlign:o.va,shading:o.sh?{type:D.ShadingType.CLEAR,fill:L,color:‘auto’}:undefined,
+children:[new D.Paragraph({alignment:o.al,children:[new D.TextRun({text:String(t==null?’’:t),bold:!!o.b,font:‘Arial’,size:o.sz||19})]})]});
+const g4=rs=>{const c=[2100,3003,2100,3003];return new D.Table({width:{size:W,type:D.WidthType.DXA},columnWidths:c,rows:rs.map(x=>new D.TableRow({height:{value:400,rule:‘atLeast’},children:x.map((t,i)=>cell(t,c[i],{b:i%2===0,sh:i%2===0}))}))})};
+const g2=rs=>{const c=[2700,7506];return new D.Table({width:{size:W,type:D.WidthType.DXA},columnWidths:c,rows:(rs.length?rs:[[’’,’’]]).map(x=>new D.TableRow({height:{value:380,rule:‘atLeast’},children:[cell(x[0],c[0],{b:true,sh:true}),cell(x[1],c[1])]}))})};
+const hd=(t,c)=>new D.Paragraph({alignment:c?D.AlignmentType.CENTER:D.AlignmentType.LEFT,spacing:{before:140,after:60},children:[new D.TextRun({text:t,bold:true,font:‘Arial’,size:c?24:22})]});
+const pc=[2000,2400,3806,2000],P=[];
+const pcell=(t,i,o={})=>cell(t,pc[i],{b:o.b,sh:o.sh,al:i===3?D.AlignmentType.RIGHT:undefined});
+const sumRow=(l,v)=>new D.TableRow({children:[new D.TableCell({width:{size:8206,type:D.WidthType.DXA},columnSpan:3,borders:B,margins:mar,shading:{type:D.ShadingType.CLEAR,fill:L,color:‘auto’},children:[new D.Paragraph({alignment:D.AlignmentType.RIGHT,children:[new D.TextRun({text:l,bold:true,font:‘Arial’,size:19})]})]}),pcell(v,3,{b:true})]});
+const payT=new D.Table({width:{size:W,type:D.WidthType.DXA},columnWidths:pc,rows:[
+new D.TableRow({children:[‘Date’,‘Mode’,‘Reference’,‘Amount’].map((x,i)=>pcell(x,i,{b:true,sh:true}))}),
+…(pays.length?pays:[[’’,’’,’’,’’]]).map(x=>new D.TableRow({height:{value:340,rule:‘atLeast’},children:x.map((t,i)=>pcell(t,i))})),
+sumRow(‘Total Amount’,‘₹’+inr(num(r.amount))),sumRow(‘Advance Paid’,‘₹’+inr(pd)),sumRow(‘Balance Due’,‘₹’+inr(bal))]});
+const sc=[2551,2551,2552,2552],nm=[‘Banquet Coordinator’,‘F&B Manager’,‘Chef’,‘VP’];
+const sig=new D.Table({width:{size:W,type:D.WidthType.DXA},columnWidths:sc,rows:[new D.TableRow({children:nm.map((n,i)=>cell(n,sc[i],{b:true,sh:true,al:D.AlignmentType.CENTER}))}),
+new D.TableRow({height:{value:900,rule:‘atLeast’},children:nm.map((n,i)=>cell(‘Signature: ______________’,sc[i],{va:D.VerticalAlign.BOTTOM,sz:17}))})]});
+const doc=new D.Document({sections:[{properties:{page:{size:{width:11906,height:16838},margin:{top:700,bottom:700,left:850,right:850}}},children:[
+new D.Paragraph({alignment:D.AlignmentType.CENTER,children:[new D.TextRun({text:‘PC  PARIVAAR CATERING’,bold:true,font:‘Arial’,size:36})]}),
+new D.Paragraph({alignment:D.AlignmentType.CENTER,spacing:{before:40,after:40},children:[new D.TextRun({text:‘FUNCTION PROSPECTUS’,bold:true,font:‘Arial’,size:28})]}),
+new D.Paragraph({alignment:D.AlignmentType.CENTER,spacing:{after:100},children:[new D.TextRun({text:‘FP ID: ‘+(r.id||’’),bold:true,font:‘Arial’,size:20})]}),
+g4(info),new D.Paragraph({children:[]}),g4(sched),hd(‘PACKAGE & TECHNICAL REQUIREMENTS’),g4(pkg),hd(‘VEG MENU’,1),g2(r.menu||[]),hd(‘SPECIAL INSTRUCTIONS / AMENDMENTS’),g2(r.special||[]),hd(‘PAYMENT DETAILS’),payT,
+new D.Paragraph({spacing:{before:160},children:[]}),sig]}]});
+D.Packer.toBlob(doc).then(b=>dl(b,name));
+}
+
+/* ––––– Backup ––––– */
+function backup(){localStorage.setItem(‘fp_last_backup’,Date.now());dl(new Blob([JSON.stringify(load(),null,1)],{type:‘application/json’}),‘fp_backup_’+new Date().toISOString().slice(0,10)+’.json’)}
+function restore(inp){
+const f=inp.files[0];if(!f)return;const fr=new FileReader();
+fr.onload=()=>{try{const n=JSON.parse(fr.result);if(!Array.isArray(n))throw 0;const a=load();n.forEach(r=>{const i=a.findIndex(x=>x.id===r.id);if(i>=0)a[i]=r;else a.push(r)});store(a);renderRec();alert(‘Restored ‘+n.length+’ record(s). Records with the same FP ID were replaced.’)}catch(e){alert(‘Invalid backup file.’)}inp.value=’’};
+fr.readAsText(f);
+}
+
+function show(v){
+[‘form’,‘rec’,‘mtd’].forEach(x=>{$(‘v_’+x).classList.toggle(‘hide’,x!==v);$(‘t_’+x).classList.toggle(‘on’,x===v)});
+if(v===‘rec’)renderRec();if(v===‘mtd’)renderMtd();
+}
+build();newRec();
+{const n=new Date();$(‘mm’).value=n.getFullYear()+’-’+String(n.getMonth()+1).padStart(2,‘0’)}
+</script>
+
+</body>
+</html>
